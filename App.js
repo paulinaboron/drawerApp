@@ -11,12 +11,13 @@ import S2 from "./components/S2"
 function App() {
   return (
     <NavigationContainer>
-      <Drawer.Navigator >
+      <Drawer.Navigator>
         <Drawer.Screen name="Notatki" component={S1} />
         <Drawer.Screen name="Dodaj notatkę" component={S2} />
       </Drawer.Navigator>
     </NavigationContainer>
   );
 }
+
 export default App;
 

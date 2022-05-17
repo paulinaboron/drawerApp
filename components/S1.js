@@ -2,6 +2,7 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet, Button, FlatList } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
+import Note from './Note';
 
 // create a component
 class S1 extends Component {
@@ -42,21 +43,18 @@ class S1 extends Component {
 
     getNotes() {
         this.state.notesKeys.map(function (elem) {
-            this.getItem(elem)
+            // this.getItem(elem)
+            console.log(elem);
         })
     }
 
     async getItem(key) {
-        await SecureStore.getItemAsync(key).then((resp) =>{
+        await SecureStore.getItemAsync(key).then((resp) => {
             console.log(resp, "note");
         });
     }
 
     render() {
-        // this.getKeys()
-
-
-
 
         return (
             <View style={styles.container}>
@@ -73,14 +71,34 @@ class S1 extends Component {
 
                 <Text>{this.state.keys}</Text>
 
-                {/* <FlatList
+                <FlatList
+                    style={styles.list}
+                    numColumns={2}
                     data={
-                        this.state.keys
+                        [{
+                            title: "AA",
+                            content: "aaaa",
+                            date: '12/12/22',
+                            color: 'red',
+                            id: 1
+                        },
+                        {
+                            title: "BB",
+                            content: 'bbbbb',
+                            date: '20/05/22',
+                            color: 'blue',
+                            id: 2
+                        }]
                     }
 
-                    renderItem={({ item }) => <Text>{item.key}</Text>}
+                    renderItem={({ item }) => <Note
+                        title={item.title}
+                        content={item.content}
+                        date={item.date}
+                        color={item.color}
+                        keyExtractor={item => item.id.toString()} />}
 
-                /> */}
+                />
             </View>
         );
     }
@@ -94,6 +112,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: '#2c3e50',
     },
+
+    list:{
+        flex: 1,
+    }
 });
 
 //make this component available to the app
