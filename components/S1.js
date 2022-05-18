@@ -10,10 +10,11 @@ class S1 extends Component {
         super(props)
         this.state = {
             keys: [],
-            notesKeys: []
+            notes: []
         }
 
         this.getKeys()
+        this.funkcja = null
     }
     getData() {
         this.getKeys()
@@ -21,32 +22,26 @@ class S1 extends Component {
     }
 
     async getKeys() {
-        await SecureStore.getItemAsync("keys").then((resp) => {
-            console.log(resp, "resp");
-            resp = resp.slice(1, -1)
-            resp = resp.split(",")
-            this.setState({ keys: resp })
 
-            console.log(typeof (resp));
-            console.log(typeof (this.state.keys), this.state.keys[0]);
+        let resp = await SecureStore.getItemAsync("keys")
+        resp = JSON.parse(resp)
+        console.log(resp, "resp");
+        this.setState({ keys: resp })
 
-            var notes = resp.map(function (elem) {
-                let i = elem.slice(1, -1)
 
-                return (i)
-            })
-            console.log(notes)
-            this.setState({ notesKeys: notes })
-        })
+        this.setState({ notes: [] })
+        resp.forEach(async element => {
+            let i = await SecureStore.getItemAsync(element)
+            i = JSON.parse(i)
+            this.setState({ notes: [...this.state.notes, i] })
+            console.log(i, "i");
+        });
+
+        console.log(this.state.notes, "nnnnnnn");
+
 
     }
 
-    getNotes() {
-        this.state.notesKeys.map(function (elem) {
-            // this.getItem(elem)
-            console.log(elem);
-        })
-    }
 
     async getItem(key) {
         await SecureStore.getItemAsync(key).then((resp) => {
@@ -54,41 +49,36 @@ class S1 extends Component {
         });
     }
 
+    componentDidMount = () => {
+        this.funkcja = this.props.navigation.addListener('focus', () => {
+            // ta funkcja wykona się za kazdym razem kiedy ekran zostanie przywrócony 
+            this.getKeys()
+        });
+
+        // ta funkcja wykona się raz podczas uruchomienia ekranu
+        this.getKeys()
+
+    }
+
+    componentWillUnmount() {
+        this.funkcja();
+    }
+
     render() {
 
         return (
             <View style={styles.container}>
-                <Text>S1</Text>
                 <Button
-                    title="KLIK"
+                    title="reload"
                     onPress={() => this.getData()}
                 />
 
-                <Button
-                    title="NOTES"
-                    onPress={() => this.getNotes()}
-                />
-
-                <Text>{this.state.keys}</Text>
 
                 <FlatList
                     style={styles.list}
                     numColumns={2}
                     data={
-                        [{
-                            title: "AA",
-                            content: "aaaa",
-                            date: '12/12/22',
-                            color: 'red',
-                            id: 1
-                        },
-                        {
-                            title: "BB",
-                            content: 'bbbbb',
-                            date: '20/05/22',
-                            color: 'blue',
-                            id: 2
-                        }]
+                        this.state.notes
                     }
 
                     renderItem={({ item }) => <Note
@@ -113,7 +103,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#2c3e50',
     },
 
-    list:{
+    list: {
         flex: 1,
     }
 });

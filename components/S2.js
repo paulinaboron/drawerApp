@@ -21,11 +21,11 @@ class S2 extends Component {
             title: this.state.title,
             content: this.state.content,
             date: currDate,
-            color: colors[Math.floor(Math.random() * 3)]
+            color: colors[Math.floor(Math.random() * 4)]
         }
 
         console.log(currDate, key);
-        this.setState({keysArray: [...this.state.keysArray, key]})
+        this.setState({ keysArray: [...this.state.keysArray, key] })
 
         this.saveItem(key, JSON.stringify(note))
         this.saveItem("keys", JSON.stringify(this.state.keysArray))

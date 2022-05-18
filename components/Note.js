@@ -1,6 +1,7 @@
 //import liraries
 import React, { Component } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import * as SecureStore from 'expo-secure-store';
 
 // create a component
 class Note extends Component {
@@ -24,14 +25,20 @@ class Note extends Component {
                     onPress: () => console.log("Nie Pressed"),
                     style: "cancel"
                 },
-                { text: "Tak", onPress: () => console.log("OK Pressed") }
+                { text: "Tak", onPress: () => this.okPressed(title) }
             ]
         );
 
-        onPressNote = (t) => {
-            console.log("press", t);
-            this.createTwoButtonAlert(t)
-          };
+    onPressNote = (t) => {
+        console.log("press", t);
+        this.createTwoButtonAlert(t)
+    };
+
+    async okPressed(title) {
+        console.log(title)
+        await SecureStore.deleteItemAsync(title);
+        // console.log(r);
+    }
 
     render() {
         return (
@@ -56,6 +63,7 @@ const styles = StyleSheet.create({
     container: {
         padding: 20,
         margin: 20,
+        width: '40%'
 
     },
 
