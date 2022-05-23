@@ -1,6 +1,6 @@
 //import liraries
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, Button, FlatList } from 'react-native';
+import { View, Text, StyleSheet, Button, FlatList, TextInput } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
 import Note from './Note';
 
@@ -10,18 +10,17 @@ class S1 extends Component {
         super(props)
         this.state = {
             keys: [],
-            notes: []
+            notes: [],
+            searchValue: ""
         }
 
         this.getKeys()
         this.funkcja = null
     }
-    getData() {
-        this.getKeys()
-        console.log(this.state.keys, "kkk");
-    }
 
     async getKeys() {
+        this.setState({ notes: [] })
+        console.log(this.state.keys, "kkk");
 
         let resp = await SecureStore.getItemAsync("keys")
         resp = JSON.parse(resp)
@@ -29,25 +28,27 @@ class S1 extends Component {
         this.setState({ keys: resp })
 
 
-        this.setState({ notes: [] })
-        resp.forEach(async element => {
-            let i = await SecureStore.getItemAsync(element)
-            i = JSON.parse(i)
-            this.setState({ notes: [...this.state.notes, i] })
-            console.log(i, "i");
-        });
+        
+        if (resp != null) {
+            resp.forEach(async element => {
+                let i = await SecureStore.getItemAsync(element)
+                if (i != null) {
+                    i = JSON.parse(i)
+                    this.setState({ notes: [...this.state.notes, i] })
+                    console.log("\niiiiiiiiiii\n", i, "\niiiiiiiiiiii\n");
+                }
+
+            });
+        }
+
 
         console.log(this.state.notes, "nnnnnnn");
+        console.log("NNNNNN");
 
 
     }
 
 
-    async getItem(key) {
-        await SecureStore.getItemAsync(key).then((resp) => {
-            console.log(resp, "note");
-        });
-    }
 
     componentDidMount = () => {
         this.funkcja = this.props.navigation.addListener('focus', () => {
@@ -64,15 +65,31 @@ class S1 extends Component {
         this.funkcja();
     }
 
+    search = (text) =>{
+        // this.getKeys()
+        this.setState({searchValue: text})
+        console.log(text, "ttttttt");
+        let oldNotes = this.state.notes
+
+        let newNotes = oldNotes.filter(function (e){
+            return e.title.includes(text)
+        })
+
+        console.log(newNotes, "new notes");
+        this.setState({notes: newNotes})
+    }
+
     render() {
 
         return (
             <View style={styles.container}>
-                <Button
-                    title="reload"
-                    onPress={() => this.getData()}
-                />
 
+                <TextInput
+                    defaultValue={this.state.searchValue}
+                    value={this.state.searchValue}
+                    onChangeText={(text) => this.search(text)}
+                    multiline={true}
+                    style={styles.input} />
 
                 <FlatList
                     style={styles.list}
@@ -86,9 +103,11 @@ class S1 extends Component {
                         content={item.content}
                         date={item.date}
                         color={item.color}
+                        id={item.key}
+                        category={item.category}
                         keyExtractor={item => item.id.toString()} />}
-
                 />
+
             </View>
         );
     }
@@ -97,14 +116,24 @@ class S1 extends Component {
 // define your styles
 const styles = StyleSheet.create({
     container: {
+        paddingTop: 20,
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#2c3e50',
+        backgroundColor: 'rgb(40, 40, 50)',
     },
 
     list: {
         flex: 1,
+    },
+    input: {
+        width: '85%',
+        height: 40,
+        borderRadius: 25,
+        backgroundColor: 'rgb(24, 24, 34)',
+        marginBottom: 10,
+        textAlign: 'center',
+        color: 'white'
     }
 });
 

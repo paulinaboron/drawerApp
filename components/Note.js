@@ -8,36 +8,28 @@ class Note extends Component {
 
     constructor(props) {
         super(props)
-        console.log(props);
+        // console.log(props);
     }
 
-    async getItem() {
-        await SecureStore.getItemAsync("key");
-    }
-
-    createTwoButtonAlert = (title) =>
+    onPressNote = (id) =>
         Alert.alert(
-            "Usunąć notatkę?",
-            "",
+            "Usuwanie",
+            "Na pewno chcesz usunąć notatkę?",
             [
                 {
                     text: "Nie",
                     onPress: () => console.log("Nie Pressed"),
                     style: "cancel"
                 },
-                { text: "Tak", onPress: () => this.okPressed(title) }
+                { text: "Tak", onPress: () => this.okPressed(id) }
             ]
         );
 
-    onPressNote = (t) => {
-        console.log("press", t);
-        this.createTwoButtonAlert(t)
-    };
 
-    async okPressed(title) {
-        console.log(title)
-        await SecureStore.deleteItemAsync(title);
-        // console.log(r);
+
+    async okPressed(id) {
+        console.log(id, 'key id')
+        await SecureStore.deleteItemAsync(id);
     }
 
     render() {
@@ -45,9 +37,14 @@ class Note extends Component {
             <View style={[styles.container, { backgroundColor: this.props.color }]}>
 
                 <TouchableOpacity
-                    onPress={() => this.onPressNote(this.props.title)}
+                    onLongPress={() => this.onPressNote(this.props.id)}
                 >
-                    <Text style={styles.text}>{this.props.title}</Text>
+                    <View style={styles.row}>
+                        <Text style={styles.text}>{this.props.title}</Text>
+                        <Text style={styles.cat}>{this.props.category}</Text>
+                        
+                    </View>
+
                     <Text>{this.props.content}</Text>
                     <Text>{this.props.date}</Text>
                 </TouchableOpacity>
@@ -62,14 +59,29 @@ class Note extends Component {
 const styles = StyleSheet.create({
     container: {
         padding: 20,
-        margin: 20,
-        width: '40%'
+        margin: 15,
+        width: 140,
+        borderRadius: 10,
 
     },
 
     text: {
         fontWeight: 'bold',
         fontSize: 20,
+        flex: 1
+    },
+
+    cat: {
+        flex: 1,
+        backgroundColor: 'rgb(40, 40, 50)',
+        color: 'white',
+        textAlign: 'center',
+        borderRadius: 5,
+        padding: 5
+    },
+
+    row:{
+        flexDirection: 'row'
     }
 });
 
