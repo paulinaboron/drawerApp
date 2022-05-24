@@ -19,7 +19,8 @@ class S1 extends Component {
     }
 
     async getKeys() {
-        this.setState({ notes: [] })
+        // this.setState({ notes: [] })
+        this.state.notes = []
         console.log(this.state.keys, "kkk");
 
         let resp = await SecureStore.getItemAsync("keys")
@@ -72,7 +73,7 @@ class S1 extends Component {
         let oldNotes = this.state.notes
 
         let newNotes = oldNotes.filter(function (e){
-            return e.title.includes(text)
+            return e.title.includes(text) || e.content.includes(text) || e.category.includes(text)
         })
 
         console.log(newNotes, "new notes");
@@ -99,6 +100,7 @@ class S1 extends Component {
                     }
 
                     renderItem={({ item }) => <Note
+                        navigation={this.props.navigation}
                         title={item.title}
                         content={item.content}
                         date={item.date}

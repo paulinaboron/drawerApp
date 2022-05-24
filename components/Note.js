@@ -30,6 +30,8 @@ class Note extends Component {
     async okPressed(id) {
         console.log(id, 'key id')
         await SecureStore.deleteItemAsync(id);
+        this.props.navigation.navigate("Dodaj notatkę")
+        this.props.navigation.navigate("Notatki")
     }
 
     render() {
@@ -38,6 +40,7 @@ class Note extends Component {
 
                 <TouchableOpacity
                     onLongPress={() => this.onPressNote(this.props.id)}
+                    onPress={() => this.props.navigation.navigate("Edytowanie", {data: this.props})}
                 >
                     <View style={styles.row}>
                         <Text style={styles.text}>{this.props.title}</Text>

@@ -5,19 +5,20 @@ import * as SecureStore from 'expo-secure-store';
 import { useRef } from 'react/cjs/react.production.min';
 
 
-class S2 extends Component {
+class EditNote extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            title: "",
-            content: "",
+            title: this.props.route.params.data.title,
+            content: this.props.route.params.data.content,
             keysArray: [],
-            selectedCat: "",
+            selectedCat: this.props.route.params.data.category,
             cats: []
         };
 
         // this.getCategories()
         this.funkcja = null
+        console.log(this.props.route.params);
 
     }
 
@@ -28,25 +29,20 @@ class S2 extends Component {
     }
 
     saveNote() {
-        let colors = ['red', "green", 'blue', 'magenta']
-        let currDate = new Date().toLocaleDateString()
-        let key = JSON.stringify(Math.floor(Math.random() * 10000))
         let note = {
             title: this.state.title,
             content: this.state.content,
-            date: currDate,
-            color: colors[Math.floor(Math.random() * 4)],
-            key: key,
+            date: this.props.route.params.data.date,
+            color: this.props.route.params.data.color,
+            key: this.props.route.params.data.id,
             category: this.state.selectedCat
         }
 
         console.log(note, "note");
-        this.setState({ keysArray: [...this.state.keysArray, key] })
+        let key = this.props.route.params.data.id
 
-        // this.saveItem(key, JSON.stringify(note))
-        // this.saveItem("keys", JSON.stringify(this.state.keysArray))
+        SecureStore.deleteItemAsync(key)
         SecureStore.setItemAsync(key, JSON.stringify(note));
-        SecureStore.setItemAsync('keys', JSON.stringify(this.state.keysArray));
 
         this.props.navigation.navigate('Notatki')
 
@@ -69,11 +65,9 @@ class S2 extends Component {
 
     componentDidMount = () => {
         this.funkcja = this.props.navigation.addListener('focus', () => {
-            // ta funkcja wykona się za kazdym razem kiedy ekran zostanie przywrócony 
             this.getCategories()
         });
 
-        // ta funkcja wykona się raz podczas uruchomienia ekranu
         this.getCategories()
 
     }
@@ -89,7 +83,7 @@ class S2 extends Component {
             <View style={styles.form}>
                 <TextInput
                     underlineColorAndroid="#2222aa"
-                    placeholder="TYTUŁ"
+                    placeholder={this.props.route.params.data.title}
                     onChangeText={(text) => this.setState({ title: text })}
                     style={styles.input}
                 />
@@ -97,13 +91,12 @@ class S2 extends Component {
 
                 <TextInput
                     underlineColorAndroid="#2222aa"
-                    placeholder="TREŚĆ"
+                    placeholder={this.props.route.params.data.content}
                     onChangeText={(text) => this.setState({ content: text })}
                     style={styles.input}
                 />
                 <Picker
                     style={styles.picker}
-
                     selectedValue={this.state.selectedCat}
                     onValueChange={this.changeCat}>
 
@@ -112,7 +105,7 @@ class S2 extends Component {
                 </Picker>
 
                 <Button
-                    title="Dodaj"
+                    title="Zapisz"
                     onPress={() => this.saveNote()}
                     state={styles.button}
                 />
@@ -151,4 +144,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default S2;
+export default EditNote;

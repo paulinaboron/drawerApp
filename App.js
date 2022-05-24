@@ -13,6 +13,7 @@ const Drawer = createDrawerNavigator();
 import S1 from "./components/S1"
 import S2 from "./components/S2"
 import NewCategory from './components/NewCategory'
+import EditNote from './components/EditNote';
 
 function CustomDrawerContent(props) {
 
@@ -23,17 +24,12 @@ function CustomDrawerContent(props) {
 
       <DrawerItemList {...props} />
 
-      {/* <DrawerItem
-        label="Dodaj kategorię"
-        icon={() => <Image />}
-        onPress={() => props.navigation.navigate("ekran_edycji")}
-      /> */}
-
       <DrawerItem
         label="Info"
         icon={() => <Image />}
         onPress={() => infoAlert()}
       />
+
 
     </DrawerContentScrollView>
   );
@@ -59,6 +55,13 @@ function App() {
         <Drawer.Screen name="Notatki" component={S1} />
         <Drawer.Screen name="Dodaj notatkę" component={S2} />
         <Drawer.Screen name="Dodaj kategorię" component={NewCategory} />
+        <Drawer.Screen
+          name="Edytowanie"
+          component={EditNote}
+          options={{
+            drawerItemStyle: { height: 0 }
+          }}
+        />
       </Drawer.Navigator>
     </NavigationContainer>
   );
